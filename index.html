@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Home Pros | Premium Smart Home Plumbing, Electric & HVAC</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        },
+                        accent: {
+                            amber: '#f59e0b',
+                            emerald: '#10b981',
+                            rose: '#f43f5e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1329;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* Before/After slider styling */
+        .comparison-slider {
+            position: relative;
+            overflow: hidden;
+        }
+        .resize-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            overflow: hidden;
+        }
+
+        /* Pulse and glows */
+        .glow-blue {
+            box-shadow: 0 0 25px rgba(14, 165, 233, 0.45);
+        }
+        .glow-green {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.45);
+        }
+        .glow-amber {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.35);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1329;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0ea5e9;
+        }
+    </style>
+</head>
+<body class="selection:bg-primary-500 selection:text-white">
+
+    <!-- Toast Notification System -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 w-full z-40 bg-[#0b1329]/85 backdrop-blur-md border-b border-slate-800 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-primary-500/20">
+                        <i class="fa-solid fa-house-laptop text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-primary-400">APEX HOME PROS</span>
+                        <p class="text-[9px] text-emerald-400 tracking-widest font-semibold uppercase">Expert Care &bull; Smart Living</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#about" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">About</a>
+                    <a href="#services" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Services</a>
+                    <a href="#calculator" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Pricing Calculator</a>
+                    <a href="#before-after" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Our Work</a>
+                    <a href="#booking" class="text-sm font-medium text-slate-300 hover:text-white transition-colors font-semibold text-primary-400">Book Online</a>
+                </div>
+
+                <!-- Right Action Buttons -->
+                <div class="hidden lg:flex items-center gap-4">
+                    <a href="tel:+18005550199" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm font-medium text-slate-200 transition-all">
+                        <i class="fa-solid fa-phone text-emerald-400 animate-pulse"></i>
+                        <span>1-800-555-0199</span>
+                    </a>
+                    <button onclick="triggerEmergencyMode()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-sm font-bold text-white shadow-lg shadow-rose-900/30 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Emergency Dispatch
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden flex items-center p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-bars-staggered text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-6 bg-[#0b1329] border-b border-slate-800 space-y-3">
+            <a href="#about" class="block py-2 text-base font-medium text-slate-300 hover:text-white">About</a>
+            <a href="#services" class="block py-2 text-base font-medium text-slate-300 hover:text-white">Services</a>
+            <a href="#calculator" class="block py-2 text-base font-medium text-slate-300 hover:text-white">Pricing Calculator</a>
+            <a href="#before-after" class="block py-2 text-base font-medium text-slate-300 hover:text-white">Our Work</a>
+            <a href="#booking" class="block py-2 text-base font-semibold text-primary-400">Book Online</a>
+            <div class="pt-4 border-t border-slate-800 flex flex-col gap-3">
+                <a href="tel:+18005550199" class="flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-800 text-slate-200">
+                    <i class="fa-solid fa-phone text-emerald-400"></i>
+                    <span>Call 1-800-555-0199</span>
+                </a>
+                <button onclick="triggerEmergencyMode()" class="w-full py-3 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 font-bold text-white shadow-lg">
+                    Emergency Dispatch
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen pt-24 pb-16 flex items-center overflow-hidden">
+        <!-- Grid overlay -->
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 z-0"></div>
+        
+        <!-- Glowing Ambient Lights -->
+        <div class="absolute top-1/4 left-10 w-96 h-96 rounded-full bg-primary-600/10 blur-[120px] -z-10 animate-pulse"></div>
+        <div class="absolute bottom-1/4 right-10 w-96 h-96 rounded-full bg-emerald-500/10 blur-[120px] -z-10 animate-pulse" style="animation-delay: 2s;"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10 relative">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Hand Text & Conversions -->
+                <div class="lg:col-span-6 space-y-8 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300">
+                        <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span class="text-emerald-400 font-bold">LIVE DISPATCH ACTIVE</span>
+                        <span class="text-slate-500">|</span>
+                        <span>Average Response Time: 32 mins</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-white">
+                        Smart Home Systems <br class="hidden sm:inline">
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary-400 via-teal-300 to-emerald-400">Perfected & Protected</span>
+                    </h1>
+
+                    <p class="text-lg text-slate-300 max-w-xl mx-auto lg:mx-0">
+                        From eco-efficient plumbing and high-voltage certified electrical engineering to smart, climate-controlled HVAC integrations. Licensed, trusted, and backed by a 100% satisfaction guarantee.
+                    </p>
+
+                    <!-- Trust badging grid -->
+                    <div class="grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
+                        <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
+                            <i class="fa-solid fa-shield-halved text-emerald-400 text-xl mb-1"></i>
+                            <h4 class="text-xs font-bold text-slate-200">Fully Insured</h4>
+                            <p class="text-[10px] text-slate-400">$2M Liability Cover</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
+                            <i class="fa-solid fa-award text-primary-400 text-xl mb-1"></i>
+                            <h4 class="text-xs font-bold text-slate-200">15+ Years Exp.</h4>
+                            <p class="text-[10px] text-slate-400">Master Technicians</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
+                            <i class="fa-solid fa-circle-check text-amber-400 text-xl mb-1"></i>
+                            <h4 class="text-xs font-bold text-slate-200">Verified Lic.</h4>
+                            <p class="text-[10px] text-slate-400">ID: APEX-992-H</p>
+                        </div>
+                    </div>
+
+                    <!-- Call To Action Group -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="#booking" class="px-8 py-4 rounded-xl bg-gradient-to-r from-primary-500 to-teal-500 hover:from-primary-600 hover:to-teal-600 font-bold text-white shadow-xl shadow-primary-500/10 transition-all text-center">
+                            Schedule Online Instant
+                        </a>
+                        <a href="#calculator" class="px-8 py-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 font-bold text-slate-200 transition-all text-center flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-calculator text-primary-400"></i>
+                            Instant Cost Estimator
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Hand 3D Canvas Box -->
+                <div class="lg:col-span-6 relative flex justify-center items-center h-[450px] lg:h-[550px]">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-primary-500/5 to-emerald-500/5 rounded-3xl border border-slate-800/80 backdrop-blur-3xl overflow-hidden shadow-2xl">
+                        <!-- Canvas container -->
+                        <div id="three-canvas-container" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+                        
+                        <!-- Mini Interactive Overlay Info -->
+                        <div class="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-slate-950/80 border border-slate-800 backdrop-blur-md flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <span class="flex h-3 w-3 relative">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                                </span>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-200">Apex System Diagnostics</h4>
+                                    <p class="text-[10px] text-slate-400">Rotate & inspect smart integrations</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-primary-400">Interactive 3D Matrix</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- About and Stats Section -->
+    <section id="about" class="py-24 bg-slate-900/40 border-y border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Visual Left -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative rounded-3xl overflow-hidden border border-slate-800 p-8 bg-slate-950/60">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                                <i class="fa-solid fa-user-tie text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">Marcus Vance</h3>
+                                <p class="text-xs text-slate-400">Founder & Principal Master Engineer</p>
+                            </div>
+                        </div>
+                        <blockquote class="text-slate-300 italic text-sm leading-relaxed mb-6">
+                            "Home services shouldn't be archaic. We founded Apex Home Pros to merge rigorous, elite craftsmanship with modern smart-home technology. We don't just patch up leaks; we elevate and secure your entire physical living environment."
+                        </blockquote>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Master Plumber Lic #29938</span>
+                            <span class="text-xs text-primary-400 font-bold bg-primary-500/10 px-3 py-1 rounded-full border border-primary-500/20">Certified Smart HVAC Integrator</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Right -->
+                <div class="lg:col-span-7 space-y-6">
+                    <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
+                        Elite Solutions Built on Trust, Precision & Smart Engineering
+                    </h2>
+                    <p class="text-slate-300 leading-relaxed text-base">
+                        Since our founding over 15 years ago, Apex Home Pros has transformed standard plumbing, HVAC, and electrical systems into modern home automation ecosystems. We specialize in zero-damage wall plumbing repairs, hyper-efficient cooling grids, EV charger home grids, and comprehensive safety audits.
+                    </p>
+                    <p class="text-slate-300 leading-relaxed text-base">
+                        Every single technician undergoes full background vetting, master-guild certifications, and regular training updates. That's how we protect both the comfort of your family and your underlying real estate value.
+                    </p>
+
+                    <!-- Real Data Metric Counters -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6">
+                        <div>
+                            <span class="block text-3xl font-extrabold text-primary-400">12,500+</span>
+                            <span class="block text-xs font-medium text-slate-400 mt-1">Completed Audits</span>
+                        </div>
+                        <div>
+                            <span class="block text-3xl font-extrabold text-emerald-400">4.9 / 5</span>
+                            <span class="block text-xs font-medium text-slate-400 mt-1">Google & Yelp Score</span>
+                        </div>
+                        <div>
+                            <span class="block text-3xl font-extrabold text-amber-400">100%</span>
+                            <span class="block text-xs font-medium text-slate-400 mt-1">Lifetime Guarantee</span>
+                        </div>
+                        <div>
+                            <span class="block text-3xl font-extrabold text-rose-500">&lt; 45m</span>
+                            <span class="block text-xs font-medium text-slate-400 mt-1">Emergency Dispatch</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Grid section -->
+    <section id="services" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs uppercase font-extrabold tracking-widest text-primary-400">Our Capabilities</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Full-Spectrum Master Craftsmanship</h2>
+                <p class="text-slate-400">Transparent pricing. No high-pressure sales. Choose from our specialized areas of home infrastructure engineering.</p>
+            </div>
+
+            <!-- Interactive Services Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Service 1: Plumbing -->
+                <div class="group p-8 rounded-3xl bg-slate-900/40 border border-slate-800 hover:border-primary-500/50 hover:bg-slate-900/60 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-faucet-drip text-primary-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Hydro-Static & Eco Plumbing</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        Smart leak detection, structural repair, tankless high-efficiency heater retrofitting, drain scrubbing, and pressure calibration.
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="block text-[10px] text-slate-500 font-bold uppercase">Average Rate</span>
+                            <span class="text-white font-extrabold text-lg">$95 <span class="text-xs font-normal text-slate-400">/ hr</span></span>
+                        </div>
+                        <a href="#booking" onclick="selectService('Plumbing Repair')" class="px-4 py-2 text-xs font-bold text-primary-400 hover:text-white rounded-lg bg-primary-500/5 hover:bg-primary-500 transition-all">Book Service</a>
+                    </div>
+                </div>
+
+                <!-- Service 2: Electrical -->
+                <div class="group p-8 rounded-3xl bg-slate-900/40 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-900/60 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bolt text-amber-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">High-Voltage Grid & Lighting</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        Complete home panel rewiring, smart breaker integration, Level-2 EV Charging installations, system diagnostics, and emergency lockouts.
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="block text-[10px] text-slate-500 font-bold uppercase">Average Rate</span>
+                            <span class="text-white font-extrabold text-lg">$110 <span class="text-xs font-normal text-slate-400">/ hr</span></span>
+                        </div>
+                        <a href="#booking" onclick="selectService('Electrical Grid Setup')" class="px-4 py-2 text-xs font-bold text-amber-400 hover:text-white rounded-lg bg-amber-500/5 hover:bg-amber-500 transition-all">Book Service</a>
+                    </div>
+                </div>
+
+                <!-- Service 3: HVAC -->
+                <div class="group p-8 rounded-3xl bg-slate-900/40 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-900/60 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-temperature-half text-emerald-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Smart Climate & Air Purification</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        Heat pump installs, custom smart thermostat integration (Nest/Ecobee), dual-phase filter sanitization, zone control, and complete duct restoration.
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="block text-[10px] text-slate-500 font-bold uppercase">Average Rate</span>
+                            <span class="text-white font-extrabold text-lg">$120 <span class="text-xs font-normal text-slate-400">/ hr</span></span>
+                        </div>
+                        <a href="#booking" onclick="selectService('Climate Control Installation')" class="px-4 py-2 text-xs font-bold text-emerald-400 hover:text-white rounded-lg bg-emerald-500/5 hover:bg-emerald-500 transition-all">Book Service</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Before / After Work Showcase -->
+    <section id="before-after" class="py-24 bg-slate-950/40 border-y border-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Details -->
+                <div class="lg:col-span-5 space-y-6">
+                    <span class="text-xs uppercase font-extrabold tracking-widest text-emerald-400">Visual Evidence</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Watch Quality Take Shape</h2>
+                    <p class="text-slate-300">
+                        We don't hide our process. Hover and drag the slider on the right to compare an outdated, hazardous home utility setup with our precision-engineered final layout.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex gap-4 items-start">
+                            <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0 mt-1 text-red-400">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Before: Messy & Hazardous</h4>
+                                <p class="text-xs text-slate-400">Outdated wiring layouts, standard efficiency leaks, high risk points.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 mt-1 text-emerald-400">
+                                <i class="fa-solid fa-square-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">After: Seamless Apex Blueprint</h4>
+                                <p class="text-xs text-slate-400">Safe clean mounting, fireproofing, smart safety monitoring relays built-in.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Slider Canvas -->
+                <div class="lg:col-span-7">
+                    <div class="comparison-slider w-full aspect-[4/3] rounded-3xl border border-slate-800 shadow-2xl relative select-none" id="before-after-container">
+                        
+                        <!-- Before Visual (Underneath background) -->
+                        <div class="absolute inset-0 bg-[#090d16] flex flex-col justify-center items-center p-8 text-center">
+                            <!-- Outdated utility setup vector graphics mock -->
+                            <div class="w-2/3 h-2/3 border-2 border-dashed border-red-500/20 rounded-2xl flex flex-col justify-center items-center relative overflow-hidden bg-red-950/5">
+                                <div class="absolute inset-0 bg-[radial-gradient(#ef4444_1px,transparent_1px)] bg-[size:16px_16px] opacity-10"></div>
+                                <i class="fa-solid fa-triangle-exclamation text-red-500 text-5xl mb-4 animate-bounce"></i>
+                                <span class="text-xs font-extrabold tracking-widest text-red-400 uppercase bg-red-950/80 px-3 py-1 rounded-full border border-red-500/20">CORROSIVE PIPING & RISKY GRID DETECTED</span>
+                                <div class="mt-4 text-[10px] text-slate-500 font-mono space-y-1">
+                                    <p class="text-red-300">ALERT: Pressure exceeding safety limit (120 PSI)</p>
+                                    <p class="text-red-300">ALERT: Short circuit potential at main block</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- After Visual (Resizing dynamic slide div) -->
+                        <div class="resize-img absolute inset-0 bg-gradient-to-br from-slate-900 to-[#0b1329] border-r-2 border-primary-500 flex flex-col justify-center items-center p-8 text-center" id="after-view">
+                            <!-- Smart secure engineering setup vector graphics mock -->
+                            <div class="w-[450px] md:w-[600px] h-[300px] border-2 border-emerald-500/40 rounded-2xl flex flex-col justify-center items-center relative overflow-hidden bg-emerald-950/10">
+                                <div class="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] bg-[size:16px_16px] opacity-15"></div>
+                                <i class="fa-solid fa-circle-check text-emerald-400 text-5xl mb-4 animate-pulse"></i>
+                                <span class="text-xs font-extrabold tracking-widest text-emerald-400 uppercase bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-500/20">APEX SECURE CERTIFIED blueprint</span>
+                                <div class="mt-4 text-[10px] text-emerald-300 font-mono space-y-1">
+                                    <p>SYSTEM STATUS: Optimal & Regulated (45 PSI)</p>
+                                    <p>SAFETY RELAY: Engaged & Shielded</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Handles -->
+                        <div class="absolute top-0 bottom-0 w-1 bg-primary-500 cursor-ew-resize flex items-center justify-center" id="slider-handle" style="left: 50%;">
+                            <div class="w-10 h-10 rounded-full bg-slate-900 border-2 border-primary-500 flex items-center justify-center shadow-xl text-primary-400 text-xs">
+                                <i class="fa-solid fa-left-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Pricing Estimate Calculator Section -->
+    <section id="calculator" class="py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
+                <span class="text-xs uppercase font-extrabold tracking-widest text-emerald-400">Total Transparency</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Live System Quote Estimator</h2>
+                <p class="text-slate-400">Get an transparent structural assessment estimate instantly. Choose services and see calculation changes immediately.</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto bg-slate-900/40 border border-slate-800 rounded-3xl p-8 lg:p-12 backdrop-blur-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    
+                    <!-- Left Selectors Form -->
+                    <div class="space-y-6">
+                        <!-- Select Core Work -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Service Core System</label>
+                            <select id="calc-service-type" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-primary-500 text-sm">
+                                <option value="plumbing" data-rate="95">Hydro-Static Eco Plumbing ($95/hr)</option>
+                                <option value="electrical" data-rate="110">High-Voltage Certified Electrical ($110/hr)</option>
+                                <option value="hvac" data-rate="120">Climate Smart Control & HVAC ($120/hr)</option>
+                            </select>
+                        </div>
+
+                        <!-- House Size Slider -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">Estimated Project Hours</label>
+                                <span class="text-sm font-bold text-primary-400" id="calc-hours-val">4 Hours</span>
+                            </div>
+                            <input type="range" id="calc-hours" min="1" max="24" value="4" class="w-full accent-primary-500 h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                <span>1 Hr (Quick Fix)</span>
+                                <span>24 Hrs (Major Retrofit)</span>
+                            </div>
+                        </div>
+
+                        <!-- Diagnostic Complexity Toggle -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Complexity Level</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button type="button" onclick="setComplexity('standard', 1.0, this)" class="complexity-btn py-3 px-2 rounded-xl bg-slate-950 border-2 border-primary-500/80 text-xs font-bold text-white transition-all text-center">
+                                    Standard
+                                </button>
+                                <button type="button" onclick="setComplexity('smart', 1.25, this)" class="complexity-btn py-3 px-2 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold text-slate-400 hover:text-white hover:border-slate-700 transition-all text-center">
+                                    Smart Upgrade
+                                </button>
+                                <button type="button" onclick="setComplexity('emergency', 1.5, this)" class="complexity-btn py-3 px-2 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold text-slate-400 hover:text-white hover:border-slate-700 transition-all text-center">
+                                    Immediate Emergency
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Custom Add-ons -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Environmental Add-ons</label>
+                            <div class="space-y-2.5">
+                                <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-950/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+                                    <input type="checkbox" id="addon-safeguard" data-price="45" class="accent-primary-500 h-4 w-4 rounded">
+                                    <div class="text-left">
+                                        <span class="block text-xs font-bold text-slate-200">Apex Safeguard Shield (+$45)</span>
+                                        <p class="text-[10px] text-slate-400">1 Year Extended System Protection & Safety Warranty</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-950/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+                                    <input type="checkbox" id="addon-audit" data-price="75" class="accent-primary-500 h-4 w-4 rounded">
+                                    <div class="text-left">
+                                        <span class="block text-xs font-bold text-slate-200">Smart Eco-Efficiency Audit (+$75)</span>
+                                        <p class="text-[10px] text-slate-400">Review energy/water wastage with precision tools</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Pricing Live Calculation Outcome -->
+                    <div class="flex flex-col justify-between p-8 rounded-3xl bg-slate-950/80 border border-slate-800 text-center relative overflow-hidden">
+                        <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-emerald-500/10 blur-xl"></div>
+                        
+                        <div class="space-y-4 relative z-10">
+                            <span class="text-[10px] tracking-widest font-extrabold uppercase text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">ESTIMATE RESULTS</span>
+                            
+                            <div class="py-6">
+                                <p class="text-xs text-slate-400 font-medium">Estimated Invoice Investment</p>
+                                <h3 class="text-5xl lg:text-6xl font-black text-white mt-2" id="calc-total-display">$0.00</h3>
+                                <p class="text-[10px] text-slate-500 mt-2 font-mono" id="calc-breakdown-display">Base: 4h x $95.00 * Standard Multiplier (1.0)</p>
+                            </div>
+
+                            <div class="border-t border-slate-800 pt-6 space-y-3 text-left">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-slate-400">Dispatch Fee</span>
+                                    <span class="text-emerald-400 font-semibold">FREE (With Service Appointment)</span>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-slate-400">Guaranteed Max Cap</span>
+                                    <span class="text-slate-200 font-semibold" id="calc-cap-display">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-8 space-y-3 relative z-10">
+                            <button onclick="applyEstimateToBooking()" class="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 font-bold text-white shadow-lg shadow-emerald-500/10 transition-all flex items-center justify-center gap-2">
+                                Lock Quote & Book Online
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                            <p class="text-[10px] text-slate-500 leading-normal">
+                                Estimates are generated based on average master rate grids. Actual final pricing will be confirmed in-person prior to any tool engagement.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Core Interactive Booking Wizard -->
+    <section id="booking" class="py-24 bg-slate-950/40 border-t border-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                
+                <!-- Left Booking Instruction info card -->
+                <div class="lg:col-span-4 space-y-6">
+                    <span class="text-xs uppercase font-extrabold tracking-widest text-primary-400">Simple 4-Step Booking</span>
+                    <h2 class="text-3xl font-extrabold text-white">Let's Secure Your Dispatch</h2>
+                    <p class="text-slate-300">
+                        Pick your needed discipline, desired time frame, and enter your details. Our dispatch engine registers your request instantly, alerting master technicians in your local sector.
+                    </p>
+                    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+                        <div class="flex gap-3 items-center">
+                            <i class="fa-solid fa-hourglass text-emerald-400 text-lg"></i>
+                            <span class="text-xs font-bold text-slate-200">Real-Time Tracker Notification Link via SMS</span>
+                        </div>
+                        <div class="flex gap-3 items-center">
+                            <i class="fa-solid fa-circle-dollar-to-slot text-primary-400 text-lg"></i>
+                            <span class="text-xs font-bold text-slate-200">No payment taken now &mdash; pay upon work completion</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Wizard Interactive Form -->
+                <div class="lg:col-span-8 bg-slate-900/30 border border-slate-800 rounded-3xl p-8 lg:p-10 backdrop-blur-md">
+                    <!-- Progress Bar indicators -->
+                    <div class="flex justify-between items-center mb-8 border-b border-slate-800/80 pb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold text-sm" id="step-num-1">1</div>
+                            <span class="text-xs font-bold text-white hidden sm:inline" id="step-text-1">Discipline</span>
+                        </div>
+                        <div class="h-[1px] bg-slate-800 flex-1 mx-4"></div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-sm" id="step-num-2">2</div>
+                            <span class="text-xs font-bold text-slate-400 hidden sm:inline" id="step-text-2">Schedule</span>
+                        </div>
+                        <div class="h-[1px] bg-slate-800 flex-1 mx-4"></div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-sm" id="step-num-3">3</div>
+                            <span class="text-xs font-bold text-slate-400 hidden sm:inline" id="step-text-3">Contact Details</span>
+                        </div>
+                    </div>
+
+                    <!-- STEP 1 CONTAINER -->
+                    <div id="booking-step-1" class="space-y-6">
+                        <h3 class="text-lg font-bold text-white">Select System Focus</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <button onclick="setBookingCategory('Plumbing System')" class="booking-cat-btn p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-primary-500/50 transition text-left flex flex-col justify-between h-40">
+                                <i class="fa-solid fa-faucet-drip text-primary-400 text-2xl"></i>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white">Plumbing Setup</h4>
+                                    <p class="text-[10px] text-slate-500">Hydro & standard fixtures</p>
+                                </div>
+                            </button>
+                            <button onclick="setBookingCategory('Electrical Grid')" class="booking-cat-btn p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-primary-500/50 transition text-left flex flex-col justify-between h-40">
+                                <i class="fa-solid fa-bolt text-amber-400 text-2xl"></i>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white">Electrical Grid</h4>
+                                    <p class="text-[10px] text-slate-500">EV charging, smart rewires</p>
+                                </div>
+                            </button>
+                            <button onclick="setBookingCategory('HVAC & Smart Air')" class="booking-cat-btn p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-primary-500/50 transition text-left flex flex-col justify-between h-40">
+                                <i class="fa-solid fa-temperature-half text-emerald-400 text-2xl"></i>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white">Smart HVAC</h4>
+                                    <p class="text-[10px] text-slate-500">Air quality & heating systems</p>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="flex justify-end pt-4">
+                            <button onclick="goToStep(2)" class="px-6 py-3 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-xs flex items-center gap-2">
+                                Next Step
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2 CONTAINER -->
+                    <div id="booking-step-2" class="hidden space-y-6">
+                        <h3 class="text-lg font-bold text-white">Select Date & Time Block</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Service Appointment Date</label>
+                                <input type="date" id="booking-date" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-primary-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Time Slot Preference</label>
+                                <select id="booking-time" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-primary-500 text-sm">
+                                    <option value="morning">Morning Block (8:00 AM &mdash; 12:00 PM)</option>
+                                    <option value="afternoon">Afternoon Block (12:00 PM &mdash; 4:00 PM)</option>
+                                    <option value="evening">Evening Block (4:00 PM &mdash; 8:00 PM)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex justify-between pt-4">
+                            <button onclick="goToStep(1)" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs">
+                                Back
+                            </button>
+                            <button onclick="goToStep(3)" class="px-6 py-3 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-xs flex items-center gap-2">
+                                Next Step
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3 CONTAINER -->
+                    <div id="booking-step-3" class="hidden space-y-6">
+                        <h3 class="text-lg font-bold text-white">Enter Contact and Destination Address</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Full Name</label>
+                                <input type="text" id="booking-name" placeholder="John Doe" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-primary-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Phone Number</label>
+                                <input type="tel" id="booking-phone" placeholder="(555) 0199-555" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-primary-500 text-sm">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Destination Service Address</label>
+                                <input type="text" id="booking-address" placeholder="123 Smart Living Way, Tech Valley" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-primary-500 text-sm">
+                            </div>
+                        </div>
+                        <div class="flex justify-between pt-4">
+                            <button onclick="goToStep(2)" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs">
+                                Back
+                            </button>
+                            <button onclick="submitBooking()" class="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/10">
+                                <i class="fa-solid fa-calendar-check"></i>
+                                Confirm & Book Now
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials / Success stories Grid -->
+    <section class="py-24 bg-slate-900/20 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
+                <span class="text-xs uppercase font-extrabold tracking-widest text-primary-500">Genuine Customer Reviews</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Rated 4.9/5 Stars by Homeowners</h2>
+                <p class="text-slate-400 font-medium">Real reviews from our certified verified residential audits.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Review 1 -->
+                <div class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-4">
+                    <div class="flex items-center gap-1.5 text-amber-400">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        "Apex Home Pros rewired our complete smart energy breaker panel and installed a Level-2 EV wallbox charger in under 3 hours. Phenomenal cleanup and absolute transparency on the invoice costs. Highly recommended!"
+                    </p>
+                    <div class="flex items-center gap-3 pt-2">
+                        <div class="w-10 h-10 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-400 font-bold text-xs border border-primary-500/20">
+                            AH
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-white">Arthur Henderson</span>
+                            <span class="block text-[10px] text-slate-500">Austin, TX</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-4">
+                    <div class="flex items-center gap-1.5 text-amber-400">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        "Woke up to an absolute flood disaster in the master bathroom. Called the Apex emergency line, and a master plumber arrived in exactly 26 minutes with state-of-the-art diagnostic cameras. They saved our flooring."
+                    </p>
+                    <div class="flex items-center gap-3 pt-2">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold text-xs border border-emerald-500/20">
+                            VM
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-white">Valerie Martinez</span>
+                            <span class="block text-[10px] text-slate-500">San Jose, CA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-4">
+                    <div class="flex items-center gap-1.5 text-amber-400">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        "We hired Marcus and his crew to update our old heating systems. Best system decision ever. They set up dynamic dual-zone climate controls integrated with Ecobee. Airflow is flawless and heating costs dropped 35%."
+                    </p>
+                    <div class="flex items-center gap-3 pt-2">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 font-bold text-xs border border-amber-500/20">
+                            DK
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-white">Darren Kincaid</span>
+                            <span class="block text-[10px] text-slate-500">Charlotte, NC</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Dispatch Overlay Simulation Screen -->
+    <div id="emergency-dispatch-modal" class="fixed inset-0 z-50 bg-[#060814]/90 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="w-full max-w-lg bg-slate-950 border-2 border-rose-500/30 rounded-3xl p-8 text-center space-y-6 relative overflow-hidden shadow-2xl shadow-rose-950/20 animate-fade-in-down">
+            <div class="absolute -top-12 -left-12 w-32 h-32 rounded-full bg-rose-500/10 blur-xl animate-pulse"></div>
+            
+            <div class="w-20 h-20 rounded-full bg-rose-500/10 border-2 border-rose-500/30 flex items-center justify-center mx-auto animate-ping">
+                <i class="fa-solid fa-truck-medical text-rose-500 text-3xl"></i>
+            </div>
+
+            <div class="space-y-2">
+                <span class="text-xs uppercase font-extrabold tracking-widest text-rose-400 bg-rose-500/10 px-3.5 py-1.5 rounded-full border border-rose-500/20">EMERGENCY PRIORITY HOTLINE</span>
+                <h3 class="text-2xl font-black text-white">Establish Live System Dispatch?</h3>
+                <p class="text-sm text-slate-300">This connects your address with our nearest high-availability master engineer vehicle equipped with safety tooling.</p>
+            </div>
+
+            <!-- Simple custom mini form -->
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Your Location Address</label>
+                    <input type="text" id="emergency-address" placeholder="e.g. 52 Main Street" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white focus:outline-none focus:border-rose-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Phone Number For Active Callback</label>
+                    <input type="tel" id="emergency-phone" placeholder="e.g. (555) 0122" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white focus:outline-none focus:border-rose-500 text-sm">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="closeEmergencyMode()" class="py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm font-bold border border-slate-800 transition">
+                    Cancel Request
+                </button>
+                <button onclick="confirmEmergencyDispatch()" class="py-3.5 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white text-sm font-extrabold transition">
+                    Launch Dispatcher
+                </button>
+            </div>
+            
+            <p class="text-[10px] text-slate-500 leading-normal">
+                An average dispatch premium of $45 standard home visit surcharge applies. We guarantees target structural response times of under 45 minutes inside served zones.
+            </p>
+        </div>
+    </div>
+
+    <!-- Floating WhatsApp Dynamic Chat widget -->
+    <div id="whatsapp-widget-container" class="fixed bottom-6 right-6 z-40">
+        <!-- Main Float Icon Toggle -->
+        <button onclick="toggleWhatsappWindow()" class="w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#20ba5a] flex items-center justify-center text-white text-2xl shadow-2xl relative group focus:outline-none glow-green">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75"></span>
+            <i class="fa-brands fa-whatsapp relative z-10"></i>
+        </button>
+
+        <!-- Message Window Widget Box -->
+        <div id="whatsapp-widget-window" class="hidden absolute bottom-18 right-0 w-80 bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300">
+            <!-- Header section -->
+            <div class="bg-[#0b1429] p-5 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white">
+                        <i class="fa-solid fa-shield-cat text-xs"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white">Apex Live Support Desk</h4>
+                        <p class="text-[9px] text-emerald-400">Available 24/7 &bull; Instant Reply</p>
+                    </div>
+                </div>
+                <button onclick="toggleWhatsappWindow()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Body Area conversation -->
+            <div class="p-5 space-y-4 bg-slate-900/40">
+                <div class="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
+                    Hello! Marcus Vance here. Need a custom system quote or urgent diagnostic dispatch? Send a quick query below.
+                </div>
+            </div>
+
+            <!-- Input area direct -->
+            <div class="p-4 bg-slate-950 border-t border-slate-800">
+                <textarea id="whatsapp-input-text" placeholder="Type query... (e.g. Smart HVAC cost)" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 placeholder-slate-500 focus:outline-none focus:border-[#25D366] resize-none h-16"></textarea>
+                <button onclick="sendWhatsappMessage()" class="w-full mt-2 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-bold transition flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    Start Real Chat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Website Detailed Footer section -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-16 text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12">
+            
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-primary-600 to-emerald-500 flex items-center justify-center">
+                        <i class="fa-solid fa-house-laptop text-white text-base"></i>
+                    </div>
+                    <span class="text-lg font-extrabold tracking-wider text-white">APEX HOME PROS</span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Licensed master guild home systems service. Combining engineering with premium comfort solutions across multiple states.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-4">Core Focus Zones</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#services" class="hover:text-white transition">Hydro-Static Plumbing</a></li>
+                    <li><a href="#services" class="hover:text-white transition">Certified Grid Electrical</a></li>
+                    <li><a href="#services" class="hover:text-white transition">Smart Air Climate Integrations</a></li>
+                    <li><a href="#services" class="hover:text-white transition">Extended System Warranties</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-4">Location Info & Details</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><i class="fa-solid fa-envelope text-primary-400 mr-2"></i> dispatch@apexhomepros.com</li>
+                    <li><i class="fa-solid fa-phone text-emerald-400 mr-2"></i> 1-800-555-0199</li>
+                    <li><i class="fa-solid fa-location-dot text-rose-500 mr-2"></i> 100 Tech Valley Way, Suite A</li>
+                    <li class="pl-5 text-[11px] text-slate-500">Serving Austin, San Jose, Charlotte</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-4">Master Credentials</h4>
+                <ul class="space-y-2 text-xs text-slate-500 font-mono">
+                    <li>Master Guild Lic: APEX-992-H</li>
+                    <li>Plumbing Lic: #PLUM-338291</li>
+                    <li>HVAC EPA Certification: #EPA-44921</li>
+                    <li>General Contractor: #GC-9918</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-slate-900 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-4">
+            <p>&copy; 2026 Apex Home Pros. All rights protected. Master Guild Certified.</p>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition">Terms of Service</a>
+                <a href="#" class="hover:text-white transition">Disclaimer Quote Grid</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript Logic & Animations Setup -->
+    <script>
+        // DOM Elements
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const beforeAfterContainer = document.getElementById('before-after-container');
+        const afterView = document.getElementById('after-view');
+        const sliderHandle = document.getElementById('slider-handle');
+
+        // Dynamic State tracking
+        let selectedBookingCategory = 'Plumbing System';
+        let currentBookingStep = 1;
+        let complexityFactor = 1.0;
+
+        // Mobile Menu Toggle
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Interactive Before / After slider implementation (Mouse & Touch Events)
+        let isSliding = false;
+
+        function updateSlider(xPosition) {
+            const rect = beforeAfterContainer.getBoundingClientRect();
+            let relativeX = xPosition - rect.left;
+            
+            // Constrain
+            if (relativeX < 0) relativeX = 0;
+            if (relativeX > rect.width) relativeX = rect.width;
+
+            const percentage = (relativeX / rect.width) * 100;
+            afterView.style.width = `${percentage}%`;
+            sliderHandle.style.left = `${percentage}%`;
+        }
+
+        beforeAfterContainer.addEventListener('mousedown', () => isSliding = true);
+        window.addEventListener('mouseup', () => isSliding = false);
+        beforeAfterContainer.addEventListener('mousemove', (e) => {
+            if (!isSliding) return;
+            updateSlider(e.clientX);
+        });
+
+        // Touch event compatibility
+        beforeAfterContainer.addEventListener('touchstart', () => isSliding = true);
+        window.addEventListener('touchend', () => isSliding = false);
+        beforeAfterContainer.addEventListener('touchmove', (e) => {
+            if (!isSliding) return;
+            updateSlider(e.touches[0].clientX);
+        });
+
+        // Initialize Slider at middle
+        updateSlider(beforeAfterContainer.getBoundingClientRect().left + (beforeAfterContainer.offsetWidth / 2));
+
+        // Toast Notification Function
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-slate-900 border-emerald-500/40 text-emerald-400';
+            let icon = 'fa-circle-check';
+            if (type === 'error') {
+                bgClass = 'bg-slate-900 border-rose-500/40 text-rose-400';
+                icon = 'fa-circle-exclamation';
+            } else if (type === 'info') {
+                bgClass = 'bg-slate-900 border-primary-500/40 text-primary-400';
+                icon = 'fa-circle-info';
+            }
+
+            toast.className = `p-4 rounded-2xl border ${bgClass} shadow-xl flex items-center gap-3 max-w-sm transition-all duration-300 transform translate-y-5 opacity-0`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-lg shrink-0"></i>
+                <div class="text-xs font-bold text-slate-200 leading-normal">${message}</div>
+            `;
+
+            container.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-y-5', 'opacity-0');
+            }, 50);
+
+            // Animate out
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-20px]', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // WhatsApp Floating window trigger
+        function toggleWhatsappWindow() {
+            const win = document.getElementById('whatsapp-widget-window');
+            win.classList.toggle('hidden');
+        }
+
+        function sendWhatsappMessage() {
+            const input = document.getElementById('whatsapp-input-text');
+            const userMsg = encodeURIComponent(input.value || "I'd like to get a premium quote.");
+            const targetPhone = "18005550199";
+            
+            // Build mock dynamic dispatch trigger
+            showToast("Connecting you with live dispatcher on WhatsApp...", "info");
+            setTimeout(() => {
+                window.open(`https://wa.me/${targetPhone}?text=${userMsg}`, '_blank');
+            }, 800);
+        }
+
+        // Interactive Pricing Quote Logic
+        const calcServiceType = document.getElementById('calc-service-type');
+        const calcHours = document.getElementById('calc-hours');
+        const calcHoursVal = document.getElementById('calc-hours-val');
+        const calcTotalDisplay = document.getElementById('calc-total-display');
+        const calcCapDisplay = document.getElementById('calc-cap-display');
+        const calcBreakdownDisplay = document.getElementById('calc-breakdown-display');
+        const addonSafeguard = document.getElementById('addon-safeguard');
+        const addonAudit = document.getElementById('addon-audit');
+
+        function updateQuote() {
+            const selectedOption = calcServiceType.options[calcServiceType.selectedIndex];
+            const hourlyRate = parseFloat(selectedOption.getAttribute('data-rate'));
+            const hours = parseInt(calcHours.value);
+            
+            calcHoursVal.textContent = `${hours} ${hours === 1 ? 'Hour' : 'Hours'}`;
+
+            // Calculation
+            let subtotal = hourlyRate * hours * complexityFactor;
+            
+            if (addonSafeguard.checked) {
+                subtotal += parseFloat(addonSafeguard.getAttribute('data-price'));
+            }
+            if (addonAudit.checked) {
+                subtotal += parseFloat(addonAudit.getAttribute('data-price'));
+            }
+
+            const total = subtotal;
+            const capValue = total * 1.15; // 15% guaranteed max cap safeguard buffer
+
+            calcTotalDisplay.textContent = `$${total.toFixed(2)}`;
+            calcCapDisplay.textContent = `$${capValue.toFixed(2)}`;
+            calcBreakdownDisplay.textContent = `Base: ${hours}h * $${hourlyRate.toFixed(2)} / hr (Multiplier factor: ${complexityFactor})`;
+        }
+
+        function setComplexity(level, factor, btn) {
+            complexityFactor = factor;
+            
+            // Update btn visuals
+            document.querySelectorAll('.complexity-btn').forEach(b => {
+                b.classList.remove('border-primary-500/80', 'text-white');
+                b.classList.add('border-slate-800', 'text-slate-400');
+            });
+
+            btn.classList.remove('border-slate-800', 'text-slate-400');
+            btn.classList.add('border-primary-500/80', 'text-white');
+
+            updateQuote();
+            showToast(`Complexity multiplier updated to ${factor}x`, "info");
+        }
+
+        // Listen for pricing inputs changes
+        calcServiceType.addEventListener('change', updateQuote);
+        calcHours.addEventListener('input', updateQuote);
+        addonSafeguard.addEventListener('change', updateQuote);
+        addonAudit.addEventListener('change', updateQuote);
+
+        // Run on load
+        updateQuote();
+
+        // Pass calculated quote straight to Booking engine wizard inputs
+        function applyEstimateToBooking() {
+            const selectedOption = calcServiceType.options[calcServiceType.selectedIndex];
+            const systemLabel = selectedOption.textContent.split('(')[0].trim();
+            
+            // Auto Select Booking discipline based on calculator selection
+            setBookingCategory(systemLabel);
+            
+            // Jump to schedule
+            goToStep(2);
+
+            // Smooth Scroll
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+            showToast(`Applied estimate details to Booking Wizard!`, "success");
+        }
+
+        // Booking step navigation controller
+        function goToStep(step) {
+            // Hide all
+            document.getElementById('booking-step-1').classList.add('hidden');
+            document.getElementById('booking-step-2').classList.add('hidden');
+            document.getElementById('booking-step-3').classList.add('hidden');
+
+            // Show active
+            document.getElementById(`booking-step-${step}`).classList.remove('hidden');
+
+            // Set progress steps styling
+            for (let i = 1; i <= 3; i++) {
+                const numBox = document.getElementById(`step-num-${i}`);
+                const textLabel = document.getElementById(`step-text-${i}`);
+                
+                if (i === step) {
+                    numBox.classList.add('bg-primary-500', 'text-white');
+                    numBox.classList.remove('bg-slate-800', 'text-slate-400');
+                    textLabel.classList.add('text-white');
+                    textLabel.classList.remove('text-slate-400');
+                } else if (i < step) {
+                    numBox.classList.add('bg-emerald-500', 'text-white');
+                    numBox.classList.remove('bg-primary-500', 'bg-slate-800', 'text-slate-400');
+                    textLabel.classList.add('text-emerald-400');
+                    textLabel.classList.remove('text-slate-400');
+                } else {
+                    numBox.classList.remove('bg-primary-500', 'bg-emerald-500', 'text-white');
+                    numBox.classList.add('bg-slate-800', 'text-slate-400');
+                    textLabel.classList.remove('text-white', 'text-emerald-400');
+                    textLabel.classList.add('text-slate-400');
+                }
+            }
+
+            currentBookingStep = step;
+        }
+
+        function setBookingCategory(catName) {
+            selectedBookingCategory = catName;
+            
+            // Visual indicators update
+            document.querySelectorAll('.booking-cat-btn').forEach(btn => {
+                btn.classList.remove('border-primary-500/80', 'bg-primary-500/5');
+                btn.classList.add('border-slate-800', 'bg-slate-950');
+            });
+
+            // Find clicked and highlight
+            showToast(`Selected Category: ${catName}`, "info");
+        }
+
+        function selectService(serviceName) {
+            setBookingCategory(serviceName);
+            goToStep(2);
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Handle Wizard submission
+        function submitBooking() {
+            const name = document.getElementById('booking-name').value;
+            const phone = document.getElementById('booking-phone').value;
+            const address = document.getElementById('booking-address').value;
+            const date = document.getElementById('booking-date').value;
+
+            if (!name || !phone || !address || !date) {
+                showToast("Please fill in all requested destination details to secure booking slot.", "error");
+                return;
+            }
+
+            // Simulate slot allocation and telemetry dispatch link dispatching
+            showToast(`Success! Securing allocation for ${name}...`, "info");
+
+            setTimeout(() => {
+                showToast(`Your appointment for ${selectedBookingCategory} is set for ${date}. Tracking SMS sent!`, "success");
+                
+                // Reset form
+                document.getElementById('booking-name').value = '';
+                document.getElementById('booking-phone').value = '';
+                document.getElementById('booking-address').value = '';
+                document.getElementById('booking-date').value = '';
+                goToStep(1);
+            }, 1800);
+        }
+
+        // Emergency Mode Overlays trigger
+        function triggerEmergencyMode() {
+            document.getElementById('emergency-dispatch-modal').classList.remove('hidden');
+            document.getElementById('emergency-dispatch-modal').classList.add('flex');
+        }
+
+        function closeEmergencyMode() {
+            document.getElementById('emergency-dispatch-modal').classList.add('hidden');
+            document.getElementById('emergency-dispatch-modal').classList.remove('flex');
+        }
+
+        function confirmEmergencyDispatch() {
+            const addr = document.getElementById('emergency-address').value;
+            const tel = document.getElementById('emergency-phone').value;
+
+            if (!addr || !tel) {
+                showToast("Enter target site address & callback line to engage dispatch.", "error");
+                return;
+            }
+
+            showToast("System diagnostic vehicles updated. Dispatching nearest crew!", "success");
+            
+            setTimeout(() => {
+                closeEmergencyMode();
+                showToast("Crew #04 en route. Dispatch status sent via SMS tracker.", "info");
+            }, 1200);
+        }
+
+        // --- Interactive THREE.JS 3D Model initialization ---
+        window.onload = function() {
+            initThreeJS();
+        };
+
+        function initThreeJS() {
+            const container = document.getElementById('three-canvas-container');
+            if (!container) return;
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            // Scene & Setup
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0b1329, 0.015);
+
+            // Camera Setup
+            const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+            camera.position.set(12, 10, 15);
+            camera.lookAt(0, 0, 0);
+
+            // Custom WebGL Renderer
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Ambient & System Pointlights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            const electricLight = new THREE.PointLight(0xf59e0b, 1.5, 30);
+            electricLight.position.set(4, 5, 4);
+            scene.add(electricLight);
+
+            const plumbingLight = new THREE.PointLight(0x0ea5e9, 1.5, 30);
+            plumbingLight.position.set(-4, -2, -4);
+            scene.add(plumbingLight);
+
+            // House Schematic Geometry creation (Stylized wireframes)
+            const mainStructureGroup = new THREE.Group();
+
+            // 1. Foundation Base slab
+            const baseGeo = new THREE.BoxGeometry(8, 0.2, 8);
+            const baseMat = new THREE.MeshPhongMaterial({ color: 0x1e293b, shininess: 80, transparent: true, opacity: 0.9 });
+            const baseMesh = new THREE.Mesh(baseGeo, baseMat);
+            baseMesh.position.y = -2;
+            mainStructureGroup.add(baseMesh);
+
+            // 2. Structural Wireframe Framework of a House
+            const frameGeo = new THREE.BoxGeometry(6, 6, 6);
+            const edges = new THREE.EdgesGeometry(frameGeo);
+            const lineMat = new THREE.LineBasicMaterial({ color: 0x334155, linewidth: 2 });
+            const frameWire = new THREE.LineSegments(edges, lineMat);
+            mainStructureGroup.add(frameWire);
+
+            // 3. Roof Truss peak lines
+            const roofPoints = [
+                new THREE.Vector3(-3.2, 3, -3),
+                new THREE.Vector3(0, 5.5, -3),
+                new THREE.Vector3(3.2, 3, -3),
+                new THREE.Vector3(-3.2, 3, 3),
+                new THREE.Vector3(0, 5.5, 3),
+                new THREE.Vector3(3.2, 3, 3),
+                new THREE.Vector3(0, 5.5, -3),
+                new THREE.Vector3(0, 5.5, 3),
+            ];
+            const roofGeo = new THREE.BufferGeometry().setFromPoints(roofPoints);
+            const roofLineMat = new THREE.LineBasicMaterial({ color: 0x475569, linewidth: 2 });
+            const roofWire = new THREE.LineSegments(roofGeo, roofLineMat);
+            mainStructureGroup.add(roofWire);
+
+            // 4. Plumbing Blue Pipes network details inside
+            const plumbingGroup = new THREE.Group();
+            const pipePoints1 = [
+                new THREE.Vector3(-2.5, -2, -1.5),
+                new THREE.Vector3(-2.5, 1.5, -1.5),
+                new THREE.Vector3(1.5, 1.5, -1.5),
+            ];
+            const pipeGeo = new THREE.BufferGeometry().setFromPoints(pipePoints1);
+            const pipeMat = new THREE.LineBasicMaterial({ color: 0x0ea5e9, linewidth: 3 });
+            const pipe1 = new THREE.Line(pipeGeo, pipeMat);
+            plumbingGroup.add(pipe1);
+
+            // Glowing plumbing node sphere
+            const nodeGeo = new THREE.SphereGeometry(0.3, 16, 16);
+            const nodeMatBlue = new THREE.MeshBasicMaterial({ color: 0x0ea5e9 });
+            const waterNode = new THREE.Mesh(nodeGeo, nodeMatBlue);
+            waterNode.position.set(1.5, 1.5, -1.5);
+            plumbingGroup.add(waterNode);
+
+            mainStructureGroup.add(plumbingGroup);
+
+            // 5. Electrical Amber Nodes network
+            const electricalGroup = new THREE.Group();
+            const elecPoints = [
+                new THREE.Vector3(2.5, -2, 2.5),
+                new THREE.Vector3(2.5, 2.5, 2.5),
+                new THREE.Vector3(-1.5, 2.5, 2.5),
+            ];
+            const elecGeo = new THREE.BufferGeometry().setFromPoints(elecPoints);
+            const elecMat = new THREE.LineBasicMaterial({ color: 0xf59e0b, linewidth: 3 });
+            const lineElec = new THREE.Line(elecGeo, elecMat);
+            electricalGroup.add(lineElec);
+
+            const nodeMatAmber = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
+            const elecNode = new THREE.Mesh(nodeGeo, nodeMatAmber);
+            elecNode.position.set(-1.5, 2.5, 2.5);
+            electricalGroup.add(elecNode);
+
+            mainStructureGroup.add(electricalGroup);
+
+            // 6. Smart HVAC green spinning integration representing ventilation
+            const hvacGroup = new THREE.Group();
+            const fanRingGeo = new THREE.RingGeometry(0.8, 1.0, 32);
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0x10b981, side: THREE.DoubleSide });
+            const ring = new THREE.Mesh(fanRingGeo, ringMat);
+            ring.position.set(0, 0, -2.95);
+            hvacGroup.add(ring);
+
+            const fanBladesGeo = new THREE.BoxGeometry(0.2, 1.6, 0.05);
+            const bladeMat = new THREE.MeshBasicMaterial({ color: 0x10b981 });
+            const blades = new THREE.Mesh(fanBladesGeo, bladeMat);
+            blades.position.set(0, 0, -2.95);
+            hvacGroup.add(blades);
+
+            mainStructureGroup.add(hvacGroup);
+
+            scene.add(mainStructureGroup);
+
+            // Mouse tracking target rotation state
+            let targetRotationX = 0;
+            let targetRotationY = 0;
+            let currentRotationX = 0;
+            let currentRotationY = 0;
+
+            // Track mouse cursor movement over container
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+                targetRotationY = x * 1.5;
+                targetRotationX = y * 1.5;
+            });
+
+            // Touch compatibility tracking
+            container.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    const rect = container.getBoundingClientRect();
+                    const x = (e.touches[0].clientX - rect.left) / rect.width - 0.5;
+                    const y = (e.touches[0].clientY - rect.top) / rect.height - 0.5;
+                    targetRotationY = x * 1.5;
+                    targetRotationX = y * 1.5;
+                }
+            });
+
+            // Handle Resize
+            window.addEventListener('resize', onWindowResize, false);
+
+            function onWindowResize() {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+            }
+
+            // Real-time animation cycle rendering loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Smooth camera damp rotation toward tracking cursor values
+                currentRotationY += (targetRotationY - currentRotationY) * 0.05;
+                currentRotationX += (targetRotationX - currentRotationX) * 0.05;
+
+                mainStructureGroup.rotation.y = currentRotationY;
+                mainStructureGroup.rotation.x = currentRotationX;
+
+                // Infinite micro rotation
+                mainStructureGroup.rotation.y += 0.001;
+
+                // Spin the Smart HVAC Fan blades representation
+                blades.rotation.z += 0.04;
+
+                // Pulsate nodes size gently over time
+                const time = Date.now() * 0.003;
+                const scale = 1 + Math.sin(time) * 0.15;
+                waterNode.scale.set(scale, scale, scale);
+                elecNode.scale.set(scale, scale, scale);
+
+                renderer.render(scene, camera);
+            }
+
+            // Start loop
+            animate();
+        }
+    </script>
+</body>
+</html>
